@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Customer Count</title>
+    <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script>
+      // watch for updates from socket.io, and update the count (and play sounds)
+      // The style is like the old atari games
+      $(document).ready(function(){
+        var socket = io();
+
+        var countRef = $("#count"); 
+        var chachingRef = $("#chaching"); 
+        var wahwahRef = $("#wahwah"); 
+        var moneyRef = $("#moneymp3"); 
+
+        //colors based on old atari games, every updated count gets a new random color
+        var colors = ['#ff0000', '#00ff00', '#0000ff','#FFFF00','#FF3300','#FF0099','#663300','#003333','#cccc99','#ffffff'];
+
+        var money = 0;
+
+        //initial value and color
+        countRef.text(money);
+        countRef.css('color', colors[Math.floor(Math.random() * colors.length)]);
+  
+        //every update, check for a change in the count and update, and play an appropriate sound.
+        socket.on('update', function(msg){  
+          if(msg > money){          
+            money = msg;
+            chaching();
+            if (money % 100 == 0){//may want to change this to something higher.
+              playMoney();
+            }
+          }else if(msg < money){
+            money = msg;
+            wahwah();
+          }
+        });
+
+        //sound playing functions
+        function chaching(){
+          updateCount();
+          chachingRef.trigger('play');
+        }
+        function wahwah(){
+          updateCount();
+          wahwahRef.trigger('play');
+        }
+        function playMoney(){
+          moneyRef.trigger('play');
+        }
+
+        //update count and randomize color
+        function updateCount(){
+          countRef.text(money);
+          countRef.css('color', colors[Math.floor(Math.random() * colors.length)]);
+        }
+      });
+    </script>
+
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Press+Start+2P);
+
+      body{
+        background-color: black;
+        overflow: hidden;
+      }
+      #count{
+        font-family: 'Press Start 2P', cursive;
+        color: white;
+        height: 100%;
+        text-align: center;
+        font-size: 50vh;
+        line-height: 50vh;
+        margin-top: 15%;
+        padding: 0;
+      }
+      #chaching, #wahwah{
+        display: none;
+      }
+    </style>
+
+  </head>
+  <body>
+    <p id="count"></p>
+    
+    <audio id="chaching" src="chaching.mp3"></audio>
+    <audio id="wahwah" src="wahwah.mp3"></audio>
+    <audio id="moneymp3" src="money.mp3"></audio>
+  </body>
+</html>

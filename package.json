@@ -1,0 +1,11 @@
+{
+  "name": "customer_counter",
+  "version": "1.0.0",
+  "description": "Node and socket.io app to display an updated row count of a table",
+  "dependencies": {
+    "express": "4.10.2",
+    "socket.io": "1.2.0",
+    "mysql": "~2.10.2",
+    "bluebird": "~3.3.4"
+  }
+}
